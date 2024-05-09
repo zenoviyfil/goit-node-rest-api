@@ -1,53 +1,47 @@
+import { error } from "console";
 import HttpError from "../helpers/HttpError.js";
-import contactsService from "../services/contactsServices.js";
+import {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+} from "../services/contactsServices.js";
+import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
+import validateBody from "../helpers/validateBody.js";
 
 export const getAllContacts = (req, res) => {
-    const contacts = listContacts();
-
-    return res.status(200).json(contacts)
+    listContacts().then((contacts) => res.status(200).json(contacts));
 };
 
 export const getOneContact = (req, res) => {
-    const contact = getContactById(contactId);
-
-    if(contact) {
-        return res.status(200).json(contact)
-    } else {
-        return res.send(HttpError(404));
-    }
+    getContactById(req.params.id)
+      .then((contact) => res.status(200).json(contact))
+      .catch(() => res.send(HttpError(404)))
 };
 
 export const deleteContact = (req, res) => {
-    const removedContact = removeContact(contactId);
-
-    if(contact) {
-        return res.status(200).json(removedContact)
-    } else {
-        return res.send(HttpError(404));
-    }
+    removeContact(req.params.id)
+      .then((contact) => res.status(200).json(contact))
+      .catch(() => res.send(HttpError(404)));
 };
 
 export const createContact = (req, res) => {
     validateBody(createContactSchema);
 
-    const newContact = addContact(req.body)
-    return res.status(201).json(newContact)
+    addContact(req.body).then((newContact) => res.status(201).json(newContact));
+    
 };
 
 export const updateContact = (req, res) => {
     if(!req.body) {
-        return res.send(
-          HttpError(400, { "message": "Body must have at least one field" })
+        res.send(
+          HttpError(400)
         );
     }
 
     validateBody(updateContactSchema);
 
-    const updatedContact = updateContact(req.params.id, req.body)
-
-    if(!updatedContact) {
-        return res.send(HttpError(404))
-    }
-
-    return res.status(201).json(updatedContact)
+    updateContact(req.params.id, req.body).then((updatedContact) =>
+      res.status(201).json(updatedContact)
+    );
 };
