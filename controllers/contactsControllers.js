@@ -26,9 +26,19 @@ export const deleteContact = (req, res) => {
 };
 
 export const createContact = (req, res) => {
-    validateBody(createContactSchema);
+    const contact = {
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phone,
+    }
 
-    addContact(req.body).then((newContact) => res.status(201).json(newContact));
+    const { error } = createContactSchema.validate(contact, {abortEarly: false})
+
+    if(error) {
+        return res.status(400).send(error.details.map((error) => error.message).join(", "))
+    }
+    
+    addContact(req.body).then((contact) => res.status(201).json(contact));
     
 };
 
