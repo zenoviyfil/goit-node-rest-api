@@ -49,7 +49,7 @@ async function removeContact(contactId) {
 async function addContact({name, email, phone}) {
   const contacts = await readContacts();
 
-  const newContact = { name, email, phone, id: crypto.randomUUID() };
+  const newContact = { id: crypto.randomUUID(), name, email, phone };
   contacts.push(newContact);
 
   await writeContacts(contacts);
@@ -57,4 +57,27 @@ async function addContact({name, email, phone}) {
   return newContact;
 }
 
-export { listContacts, getContactById, removeContact, addContact };
+
+async function updateData(id, updatedData) {
+  const contacts = await readContacts();
+  const contactIdx = contacts.findIndex((contact) => contact.id === id);
+
+  if (contactIdx === -1) {
+    return null;
+  }
+
+  const updatedContact = { ...contacts[contactIdx], ...updatedData };
+  contacts[contactIdx] = updatedContact;
+
+  await writeContacts(contacts);
+
+  return updatedContact;
+}
+
+export {
+  listContacts,
+  getContactById,
+  removeContact,
+  addContact,
+  updateData,
+};
