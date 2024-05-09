@@ -5,6 +5,7 @@ import {
   getContactById,
   removeContact,
   addContact,
+  updateData,
 } from "../services/contactsServices.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 import validateBody from "../helpers/validateBody.js";
@@ -15,14 +16,28 @@ export const getAllContacts = (req, res) => {
 
 export const getOneContact = (req, res) => {
     getContactById(req.params.id)
-      .then((contact) => res.status(200).json(contact))
-      .catch(() => res.send(HttpError(404)))
+      .then((contact) => {
+        if (contact) {
+          res.status(200).json(contact);
+        } else {
+          res.status(404).json({ message: "Not found" });
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
 };
 
 export const deleteContact = (req, res) => {
     removeContact(req.params.id)
-      .then((contact) => res.status(200).json(contact))
-      .catch(() => res.send(HttpError(404)));
+      .then((contact) => {
+        if (contact) {
+            res.status(200).json(contact);
+        } else {
+            res.status(404).json({ message: "Not found" });
+        }
+      })
+      .catch((error) => console.error("Error:", error));
 };
 
 export const createContact = (req, res) => {
@@ -35,23 +50,39 @@ export const createContact = (req, res) => {
     const { error } = createContactSchema.validate(contact, {abortEarly: false})
 
     if(error) {
-        return res.status(400).send(error.details.map((error) => error.message).join(", "))
+        return res.status(400).json(error.details.map((error) => error.message).join(", "))
     }
     
-    addContact(req.body).then((contact) => res.status(201).json(contact));
+    addContact(req.body).then((newContact) => res.status(201).json(newContact)).catch(error => {
+        console.error("Error:", error)
+    });
     
 };
 
 export const updateContact = (req, res) => {
-    if(!req.body) {
-        res.send(
-          HttpError(400)
-        );
+    const id = req.params.id;
+    const updatedData = req.body;
+
+    if (Object.keys(updatedData).length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Body must have at least one field" });
     }
 
-    validateBody(updateContactSchema);
+    const { error } = updateContactSchema.validate(updatedData);
+    if (error) {
+        return res.status(400).json({message: error.message})
+    }
 
-    updateContact(req.params.id, req.body).then((updatedContact) =>
-      res.status(201).json(updatedContact)
-    );
+    updateData(id, updatedData)
+      .then((updatedContact) => {
+        if (updatedContact) {
+          res.status(200).json(updatedContact);
+        } else {
+          res.status(404).json({ message: "Not found" });
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
 };
