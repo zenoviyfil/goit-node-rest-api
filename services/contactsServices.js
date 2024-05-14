@@ -1,6 +1,26 @@
 import * as fs from "fs/promises";
 import path from "path";
 import crypto from "crypto";
+import { func } from "joi";
+
+//-----------------------------
+const mongoose = require('mongoose')
+const uri =
+  "mongodb+srv://user1:YGyE7PyeB7x@cluster0.hlp2rdj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+  async function connect() {
+    try {
+      await mongoose.connect(uri)
+      console.log("Database connection successful");
+    } catch (error) {
+      console.log("process.exit(1)");
+    } finally {
+      await mongoose.disconnect()
+    }
+  }
+
+  connect()
+//-----------------------------
 
 const contactsPath = path.resolve("db", "contacts.json");
 
