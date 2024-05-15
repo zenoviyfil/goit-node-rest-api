@@ -2,10 +2,16 @@ import Joi from "joi";
 import mongoose from "mongoose";
 
 export const createContactSchema = Joi.object({
+<<<<<<< HEAD
   name: Joi.string().required().min(3),
   email: Joi.string().email().required(),
   phone: Joi.number().required().min(8),
   favorite: Joi.boolean()
+=======
+    name: Joi.string().required().min(3),
+    email: Joi.string().email().required(),
+    phone: Joi.number().required().min(8)
+>>>>>>> main
 });
 
 export const updateContactSchema = Joi.object({
