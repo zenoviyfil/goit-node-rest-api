@@ -39,6 +39,9 @@ const contactSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+}, {
+  versionKey: false,
+  timestamps: true
 });
 
 export const Contact = mongoose.model("Contact", contactSchema);

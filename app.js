@@ -2,7 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
-
+import "dotenv/config"
 import contactsRouter from "./routes/contactsRouter.js";
 
 const app = express();
@@ -22,9 +22,9 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message });
 });
 
-// const {name, pass} = process.env
-const URI="mongodb+srv://user1:YGyE7PyeB7x@cluster0.hlp2rdj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-const PORT="3000"
+const {URI, PORT} = process.env
+// const URI="mongodb+srv://user1:YGyE7PyeB7x@cluster0.hlp2rdj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+// const PORT="3000"
 
 mongoose.set('strictQuery', true)
 
