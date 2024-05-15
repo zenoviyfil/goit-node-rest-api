@@ -38,8 +38,14 @@ const deleteContact = async (req, res, next) => {
 };
 
 const createContact = async (req, res, next) => {
+  const contact = {
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
+  }
+
   try {
-    const resp = await Contact.create(req.body)
+    const resp = await Contact.create(contact);
     res.status(201).json(resp)
   } catch (error) {
     next(error)
