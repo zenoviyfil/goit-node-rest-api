@@ -1,10 +1,11 @@
 import { error } from "console";
 import HttpError from "../helpers/HttpError.js";
 import {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
+getAllContacts,
+getContactByName,
+addContact,
+deleteContact,
+updateContact
 } from "../services/contactsServices.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 import validateBody from "../helpers/validateBody.js";
@@ -42,7 +43,7 @@ export const createContact = (req, res) => {
     
 };
 
-export const updateContact = (req, res) => {
+export const updateContactData = (req, res) => {
     if(!req.body) {
         res.send(
           HttpError(400)
