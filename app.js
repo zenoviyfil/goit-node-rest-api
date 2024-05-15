@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import mongoose from "mongoose";
 
 import contactsRouter from "./routes/contactsRouter.js";
 
@@ -21,6 +22,14 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message });
 });
 
-app.listen(3000, () => {
-  console.log("Server is running. Use our API on port: 3000");
-});
+// const {name, pass} = process.env
+const URI="mongodb+srv://user1:YGyE7PyeB7x@cluster0.hlp2rdj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const PORT="3000"
+
+mongoose.set('strictQuery', true)
+
+mongoose.connect(URI).then(() => {app.listen(PORT, () => {
+  console.log("Database connection successful")
+})}).catch(error => {console.log(error.message)
+  process.exit(1)
+})
