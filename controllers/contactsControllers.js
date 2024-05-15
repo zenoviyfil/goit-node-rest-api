@@ -1,88 +1,89 @@
-import { error } from "console";
 import HttpError from "../helpers/HttpError.js";
-import {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateData,
-} from "../services/contactsServices.js";
-import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
-import validateBody from "../helpers/validateBody.js";
+import {Contact} from "../schemas/contactsSchemas.js";
 
-export const getAllContacts = (req, res) => {
-    listContacts().then((contacts) => res.status(200).json(contacts));
+
+const getAllContacts = async (req, res, next) => {
+  try {
+    const resp = await Contact.find()
+    res.json(resp)
+  } catch (error) {
+    next(error)
+  }
 };
 
-export const getOneContact = (req, res) => {
-    getContactById(req.params.id)
-      .then((contact) => {
-        if (contact) {
-          res.status(200).json(contact);
-        } else {
-          res.status(404).json({ message: "Not found" });
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+const getOneContact = async (req, res, next) => {
+  try {
+    const {id} = req.params;
+    const resp = await Contact.findById(id)
+    if (!resp) {
+      throw HttpError(404, "Not Found")
+    }
+    res.json(resp)
+  } catch (error) {
+    next(error)
+  }
 };
 
-export const deleteContact = (req, res) => {
-    removeContact(req.params.id)
-      .then((contact) => {
-        if (contact) {
-            res.status(200).json(contact);
-        } else {
-            res.status(404).json({ message: "Not found" });
-        }
-      })
-      .catch((error) => console.error("Error:", error));
+const deleteContact = async (req, res, next) => {
+  try {
+      const {id} = req.params
+      const resp = await Contact.findByIdAndDelete(id)
+      if (!resp) {
+        throw HttpError(404, "Not Found")
+      }
+      res.json(resp)
+  } catch (error) {
+    next(error)
+}
 };
 
-export const createContact = (req, res) => {
-    const contact = {
-        name: req.body.name,
-        email: req.body.email,
-        phone: req.body.phone,
+const createContact = async (req, res, next) => {
+  try {
+    const resp = await Contact.create(req.body)
+    res.status(201).json(resp)
+  } catch (error) {
+    next(error)
+  }
+};
+
+const updateContact = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const resp = await Contact.findByIdAndUpdate(id, req.body, {new: true})
+    if (!resp) {
+      throw HttpError(404, "Not Found")
     }
 
-    const { error } = createContactSchema.validate(contact, {abortEarly: false})
-
-    if(error) {
-        return res.status(400).json(error.details.map((error) => error.message).join(", "))
+    if (!req.body || Object.keys(req.body).length === 0) {
+      throw HttpError(400, "Body must have at least one field")
     }
-    
-    addContact(req.body).then((newContact) => res.status(201).json(newContact)).catch(error => {
-        console.error("Error:", error)
-    });
-    
+
+    res.json(resp)
+  } catch (error) {
+    next(error)
+  }
 };
 
-export const updateContact = (req, res) => {
-    const id = req.params.id;
-    const updatedData = req.body;
-
-    if (Object.keys(updatedData).length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Body must have at least one field" });
+const updateStatusContact = async (req, res, next) => {
+  try {
+    const {id} = req.params
+    const {favorite} = req.body
+    const resp = await Contact.findOneAndUpdate({_id: id}, {favorite}, {new: true})
+    if (!resp) {
+      throw HttpError(404, "Not Found")
     }
 
-    const { error } = updateContactSchema.validate(updatedData);
-    if (error) {
-        return res.status(400).json({message: error.message})
-    }
+    res.json(resp)
+  } catch (error) {
+    next(error)
+  }
+}
 
-    updateData(id, updatedData)
-      .then((updatedContact) => {
-        if (updatedContact) {
-          res.status(200).json(updatedContact);
-        } else {
-          res.status(404).json({ message: "Not found" });
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-};
+export {
+  getAllContacts,
+  getOneContact,
+  deleteContact,
+  createContact,
+  updateContact,
+  updateStatusContact
+}
