@@ -44,6 +44,7 @@ const createContact = async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
+    favorite: req.body.favorite
   }
 
   try {
@@ -61,6 +62,7 @@ const updateContact = async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
+    favorite: req.body.favorite,
   };
 
   try {
@@ -81,7 +83,7 @@ const updateContact = async (req, res, next) => {
 
 const updateStatusContact = async (req, res, next) => {
   const {id} = req.params
-  
+
   try {
     const {favorite} = req.body
     const resp = await Contact.findOneAndUpdate({_id: id}, {favorite}, {new: true})
