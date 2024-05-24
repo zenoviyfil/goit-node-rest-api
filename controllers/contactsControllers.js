@@ -44,7 +44,7 @@ const createContact = async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
-    favorite: req.body.favorite
+    favorite: req.body.favorite,
   }
 
   try {

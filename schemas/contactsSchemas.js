@@ -22,26 +22,33 @@ export const updateFavorite = Joi.object({
   favorite: Joi.boolean().required(),
 });
 
-const contactSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Set name for contact"],
+const contactSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Set name for contact"],
+    },
+    email: {
+      type: String,
+      required: [true, "Set email for contact"],
+    },
+    phone: {
+      type: String,
+      required: [true, "Set phone for contact"],
+    },
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
   },
-  email: {
-    type: String,
-    required: [true, "Set email for contact"],
+  {
+    versionKey: false,
+    timestamps: true,
   },
-  phone: {
-    type: String,
-    required: [true, "Set phone for contact"],
-  },
-  favorite: {
-    type: Boolean,
-    default: false,
-  },
-}, {
-  versionKey: false,
-  timestamps: true
-});
+);
 
 export const Contact = mongoose.model("Contact", contactSchema);
