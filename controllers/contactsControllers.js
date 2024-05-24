@@ -4,7 +4,7 @@ import {Contact} from "../schemas/contactsSchemas.js";
 
 const getAllContacts = async (req, res, next) => {
   try {
-    const resp = await Contact.find()
+    const resp = await Contact.find({owner: req.user.id})
     res.json(resp)
   } catch (error) {
     next(error)
@@ -18,6 +18,9 @@ const getOneContact = async (req, res, next) => {
     const resp = await Contact.findById(id)
     if (!resp) {
       throw HttpError(404, "Not Found")
+    }
+    if (resp.owner.toString() !== req.user.id) {
+      throw HttpError(403, "No such contact in your list!")
     }
     res.json(resp)
   } catch (error) {
@@ -45,6 +48,7 @@ const createContact = async (req, res, next) => {
     email: req.body.email,
     phone: req.body.phone,
     favorite: req.body.favorite,
+    owner: req.user.id
   }
 
   try {
