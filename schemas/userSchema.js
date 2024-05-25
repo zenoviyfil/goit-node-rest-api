@@ -1,4 +1,21 @@
 import mongoose from "mongoose";
+import Joi from "joi";
+
+export const registerSchema = Joi.object({
+  name: Joi.string().min(3).required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).required(),
+  subscription: Joi.string().valid("starter", "pro", "business")
+})
+
+export const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).required()
+})
+
+export const subscriptionSchema = Joi.object({
+  subscription: Joi.string().valid("starter", "pro", "business").required()
+});
 
 const userSchema = new mongoose.Schema(
   {

@@ -1,5 +1,5 @@
 import Joi from "joi";
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export const createContactSchema = Joi.object({
   name: Joi.string().required().min(3),
@@ -41,8 +41,8 @@ const contactSchema = new mongoose.Schema(
       default: false,
     },
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      type: Schema.Types.ObjectId,
+      ref: "user",
     },
   },
   {
