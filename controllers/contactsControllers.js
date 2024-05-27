@@ -4,9 +4,7 @@ import {Contact} from "../schemas/contactsSchemas.js";
 
 const getAllContacts = async (req, res, next) => {
   try {
-    console.log(req.user);
     const resp = await Contact.find({owner: req.user.id})
-    console.log(req.user);
     res.json(resp)
   } catch (error) {
     next(error)
@@ -45,16 +43,16 @@ const deleteContact = async (req, res, next) => {
 };
 
 const createContact = async (req, res, next) => {
-  console.log(req.user)
-  const contact = {
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-    favorite: req.body.favorite,
-  }
-
+  // const contact = {
+  //   name: req.body.name,
+  //   email: req.body.email,
+  //   phone: req.body.phone,
+  //   favorite: req.body.favorite,
+  // }
+  const owner = req.user.id;
+  
   try {
-    const resp = await Contact.create(contact, {owner: req.user.id});
+    const resp = await Contact.create({...req.body, owner});
     res.status(201).json(resp)
   } catch (error) {
     next(error)
