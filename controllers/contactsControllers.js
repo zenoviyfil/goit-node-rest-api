@@ -4,7 +4,7 @@ import {Contact} from "../schemas/contactsSchemas.js";
 
 const getAllContacts = async (req, res, next) => {
   try {
-    const resp = await Contact.find()
+    const resp = await Contact.find({owner: req.user.id})
     res.json(resp)
   } catch (error) {
     next(error)
@@ -15,7 +15,7 @@ const getOneContact = async (req, res, next) => {
   const {id} = req.params;
 
   try {
-    const resp = await Contact.findById(id)
+    const resp = await Contact.findOne({_id: id, owner: req.user.id})
     if (!resp) {
       throw HttpError(404, "Not Found")
     }
@@ -29,7 +29,10 @@ const deleteContact = async (req, res, next) => {
   const {id} = req.params
 
   try {
-      const resp = await Contact.findByIdAndDelete(id)
+      const resp = await Contact.findOneAndDelete({
+        _id: id,
+        owner: req.user.id
+      })
       if (!resp) {
         throw HttpError(404, "Not Found")
       }
@@ -40,15 +43,16 @@ const deleteContact = async (req, res, next) => {
 };
 
 const createContact = async (req, res, next) => {
-  const contact = {
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-    favorite: req.body.favorite
-  }
-
+  // const contact = {
+  //   name: req.body.name,
+  //   email: req.body.email,
+  //   phone: req.body.phone,
+  //   favorite: req.body.favorite,
+  // }
+  const owner = req.user.id;
+  
   try {
-    const resp = await Contact.create(contact);
+    const resp = await Contact.create({...req.body, owner});
     res.status(201).json(resp)
   } catch (error) {
     next(error)
@@ -66,7 +70,7 @@ const updateContact = async (req, res, next) => {
   };
 
   try {
-    const resp = await Contact.findByIdAndUpdate(id, contact, { new: true });
+    const resp = await Contact.findOneAndUpdate({_id: id, owner: req.user.id}, contact, { new: true });
     if (!resp) {
       throw HttpError(404, "Not Found")
     }
@@ -91,7 +95,7 @@ const updateStatusContact = async (req, res, next) => {
       throw HttpError(404, "Not Found")
     }
 
-    res.json(resp)
+    res.status(200).json(resp)
   } catch (error) {
     next(error)
   }
