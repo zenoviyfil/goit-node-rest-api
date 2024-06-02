@@ -25,7 +25,7 @@ const changeAvatar = async (req, res, next) => {
       { new: true }
     );
 
-    res.status(200).send({ id: user._id, avatar: user.avatar });
+    res.status(200).send({ avatar: user.avatar });
   } catch (error) {
     next(error)
   }

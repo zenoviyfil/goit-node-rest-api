@@ -25,8 +25,6 @@ app.use((err, req, res, next) => {
 });
 
 const {URI, PORT} = process.env
-// const URI="mongodb+srv://user1:YGyE7PyeB7x@cluster0.hlp2rdj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-// const PORT="3000"
 
 mongoose.set('strictQuery', true)
 
@@ -35,3 +33,5 @@ mongoose.connect(URI).then(() => {app.listen(PORT, () => {
 })}).catch(error => {console.log(error.message)
   process.exit(1)
 })
+
+export default app
