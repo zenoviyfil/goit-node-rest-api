@@ -1,8 +1,8 @@
 import express from 'express'
-import userRouter from "./userRouter.js"
-import contactsRouter from './contactsRouter.js'
 import auth from '../middleware/auth.js';
 
+import userRouter from "./userRouter.js"
+import contactsRouter from './contactsRouter.js'
 
 const router = express.Router()
 
