@@ -4,12 +4,14 @@ import cors from "cors";
 import mongoose from "mongoose";
 import "dotenv/config"
 import router from './routes/index.js'
+import path from 'path'
 
 const app = express();
 
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
+app.use("/avatars", express.static(path.resolve("public/avatars")))
 
 app.use("/api", router);
 
@@ -23,8 +25,6 @@ app.use((err, req, res, next) => {
 });
 
 const {URI, PORT} = process.env
-// const URI="mongodb+srv://user1:YGyE7PyeB7x@cluster0.hlp2rdj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-// const PORT="3000"
 
 mongoose.set('strictQuery', true)
 
@@ -33,3 +33,5 @@ mongoose.connect(URI).then(() => {app.listen(PORT, () => {
 })}).catch(error => {console.log(error.message)
   process.exit(1)
 })
+
+export default app
