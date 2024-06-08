@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Joi from "joi";
+import Joi, { boolean, required } from "joi";
 
 export const registerSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -15,6 +15,10 @@ export const loginSchema = Joi.object({
 export const subscriptionSchema = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business").required()
 });
+
+export const emailSchema = Joi.object({
+  email: Joi.string().email().required()
+})
 
 const userSchema = new mongoose.Schema(
   {
@@ -40,6 +44,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    verify: {
+      type: Boolean,
+      default: false
+    },
+    verificationToken: {
+      type: String,
+      default: null,
+      required: [true, "Verify token is required"]
+    }
   },
   {
     versionKey: false,
