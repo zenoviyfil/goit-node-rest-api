@@ -5,7 +5,7 @@ import Jimp from "jimp";
 import { User } from "../schemas/userSchema.js";
 import sendMail from "../helpers/mailSender.js";
 
-const { MAIL_URI } = process.env;
+const { BASE_LOCAL_URI } = process.env;
 
 const changeAvatar = async (req, res, next) => {
   try {
@@ -67,8 +67,8 @@ const resendVerification = async (req, res, next) => {
       to: email,
       from: "fil.zenoviy@gmail.com",
       subject: "Resend verify email",
-      html: `To confirm your email please click on <a target="_blank" href="${MAIL_URI}/api/users/verify/${user.verificationToken}">link</a>`,
-      text: `To confirm your email please open the link ${MAIL_URI}/api/users/verify/${user.verificationToken}`,
+      html: `To confirm your email please click on <a target="_blank" href="${BASE_LOCAL_URI}/api/users/verify/${user.verificationToken}">link</a>`,
+      text: `To confirm your email please open the link ${BASE_LOCAL_URI}/api/users/verify/${user.verificationToken}`,
     };
     sendMail(message);
 
