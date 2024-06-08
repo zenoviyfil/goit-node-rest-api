@@ -4,6 +4,9 @@ import gravatar from "gravatar";
 
 import { User } from "../schemas/userSchema.js";
 import HttpError from "../helpers/HttpError.js";
+import sendMail from '../helpers/mailSender.js'
+
+const {JWT, MAIL_URI} = process.env
 
 const register = async (req, res, next) => {
   try {
@@ -16,10 +19,22 @@ const register = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const avatar = gravatar.url(email);
+    const verificationToken = crypto.randomUUID()
+
+    const message = {
+      to: email,
+      from: "fil.zenoviy@gmail.com",
+      subject: "Verify email",
+      html: `To confirm your email please click on <a target="_blank" href="${MAIL_URI}/api/users/verify/${verificationToken}">link</a>`,
+      text: `To confirm your email please open the link ${MAIL_URI}/api/users/verify/${verificationToken}`,
+    };
+    sendMail(message);
+
     const newUser = await User.create({
       email,
       password: hashedPassword,
       avatar,
+      verificationToken
     });
 
     res
@@ -49,10 +64,13 @@ const login = async (req, res, next) => {
     if (!isMatch) {
       return next(HttpError(401, "Email or password is wrong!"));
     }
+    if (user.verify === false) {
+      return next(HttpError(401, "Please verify your email"))
+    }
 
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT,
+      JWT,
       { expiresIn: "1h" }
     );
 

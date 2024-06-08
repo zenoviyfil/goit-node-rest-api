@@ -6,7 +6,7 @@
         "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
         "start": "node ./app.js",
         "dev": "nodemon ./app.js"
-      },
+    },
     "dependencies": {
         "bcrypt": "^5.1.1",
         "cors": "^2.8.5",
@@ -20,6 +20,7 @@
         "mongoose": "^8.3.4",
         "morgan": "^1.10.0",
         "multer": "^1.4.5-lts.1",
+        "nodemailer": "^6.9.13",
         "supertest": "^7.0.0",
         "uuid": "^9.0.1"
     },
