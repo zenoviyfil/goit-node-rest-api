@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Joi, { boolean, required } from "joi";
+import Joi from "joi";
 
 export const registerSchema = Joi.object({
   email: Joi.string().email().required(),
